@@ -110,6 +110,19 @@ kubectl annotate crd ec2nodeclasses.karpenter.k8s.aws nodepools.karpenter.sh nod
 kubectl annotate crd ec2nodeclasses.karpenter.k8s.aws nodepools.karpenter.sh nodeclaims.karpenter.sh meta.helm.sh/release-namespace="${KARPENTER_NAMESPACE}" --overwrite
 ```
 
+## Upgrade
+
+### Garbage collector no longer cascade deletes orphan resources after upgrading Karpenter version
+
+The following error occurs if you update Karpenter to a different API version (e.j. v1beta1 to v1). This is displayed in the controller-manager logs:
+
+```
+conversion webhook for karpenter.k8s.aws/v1beta1, Kind=EC2NodeClass failed: Post "https://karpenter.kube-system.svc:8443/conversion/karpenter.k8s.aws?timeout=30s": no endpoints available for service "karpenter"
+```
+
+To fix this, make sure to delete all of Karpenter CRD versions from your cluster and do a clean reinstall of Karpenter. Make sure to backup any NodePool and NodeClass you are using. Follow the [Karpenter upgrade guide](https://karpenter.sh/docs/upgrading/upgrade-guide/) to follow the recommended process when upgrading Karpenter.
+
+
 ## Uninstallation
 
 ### Unable to delete nodes after uninstalling Karpenter
